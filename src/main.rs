@@ -1,9 +1,16 @@
 use std::io::{self, Write};
+use viuer::{print_from_file, Config};
 
 fn main() {
     let target: i32 = 646;
 
     print!("{}[2J{}[1;1H", 27 as char, 27 as char);
+
+    let conf = Config { width: Some(50), height: Some(20), use_iterm: true, ..Default::default() };
+    if let Err(_) = print_from_file("assets/level0.png", &conf) {
+        println!("Image could not render. Check assets/level0.png.");
+    }
+
     println!("==================== DECRYPTORS ====================");
     println!("  LEVEL 0 — The Fruit Cipher");
     println!("  Hint: Guess the total price of all fruits.");
