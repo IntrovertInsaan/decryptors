@@ -15,7 +15,7 @@ fn draw_static() {
     let (w, h) = if wt { (75, 32) } else { (50, 20) };
     let _ = print_from_file("assets/level0.png", &Config {
         width: Some(w), height: Some(h), truecolor: true,
-        use_iterm: p.contains("wezterm") || p.contains("iterm"),
+        use_iterm: p.contains("wezterm") || p.contains("iterm") || p.contains("ghostty"),
         use_kitty:  t.contains("kitty"),
         use_sixel:  wt,
         ..Default::default()
