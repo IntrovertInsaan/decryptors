@@ -10,13 +10,17 @@ fn flush() { io::stdout().flush().unwrap(); }
 fn draw_static() {
     let p = std::env::var("TERM_PROGRAM").unwrap_or_default().to_lowercase();
     let t = std::env::var("TERM").unwrap_or_default().to_lowercase();
+    let wt = std::env::var("WT_SESSION").is_ok();
     print!("\x1b[2J\x1b[3J\x1b[H\x1b[?25l"); flush();
+    let (w, h) = if wt { (75, 32) } else { (50, 20) };
     let _ = print_from_file("assets/level0.png", &Config {
-        width: Some(50), height: Some(20), truecolor: true,
+        width: Some(w), height: Some(h), truecolor: true,
         use_iterm: p.contains("wezterm") || p.contains("iterm"),
         use_kitty:  t.contains("kitty"),
+        use_sixel:  wt,
         ..Default::default()
     });
+    if wt { println!("\n"); }
     println!("\x1b[93m\x1b[1m  ✦ DECRYPTORS\x1b[0m  \x1b[2mLevel 0 · The Fruit Cipher\x1b[0m");
     println!("\x1b[2m  Hint: Guess the total price of all fruits.  q = quit\x1b[0m");
 }
