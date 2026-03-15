@@ -11,6 +11,11 @@ pub fn hash_answer(input: &str, salt: &str) -> String {
     format!("{:x}", Sha256::digest(salted.as_bytes()))
 }
 
+pub fn hash_answer_exact(input: &str, salt: &str) -> String {
+    let salted = format!("{}_{}", salt, input.trim());
+    format!("{:x}", Sha256::digest(salted.as_bytes()))
+}
+
 pub fn show_completion(
     level: &str,
     subtitle: &str,

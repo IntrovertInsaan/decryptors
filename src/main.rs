@@ -3,6 +3,8 @@ mod levels;
 
 fn main() {
     if levels::level0::run() {
-        levels::level1::run();
+        if levels::level1::run() {
+            levels::level2::run();
+        }
     }
 }
