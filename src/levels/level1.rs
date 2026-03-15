@@ -1,6 +1,65 @@
-// level 1 — The Chess Cipher
-// scaffold only, not yet implemented
+use std::io;
+use std::time::Instant;
+use crate::engine::{flush, render_image, draw_dynamic, update, hash_answer, show_completion};
 
-pub fn run() {
-    todo!("Level 1 coming soon")
+const TARGET_HASH: &str = "147991c650156ef02d7df112bda2a7d1361357e539d04a06b9853fcc9da4e959";
+const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level1_trophy.pdf");
+
+fn correct(guess: &str) -> bool {
+    hash_answer(guess, "decryptors_l1") == TARGET_HASH
+}
+
+fn save_trophy() {
+    std::fs::create_dir_all("trophies").ok();
+    std::fs::write("trophies/level1_trophy.pdf", TROPHY_PDF).ok();
+}
+
+pub fn run() -> bool {
+    print!("\x1b[2J\x1b[3J\x1b[H\x1b[?25l"); flush();
+    render_image("assets/level1.png");
+    println!("\x1b[93m\x1b[1m  ✦ DECRYPTORS\x1b[0m  \x1b[2mLevel 1 · The Chess Cipher\x1b[0m");
+    println!("\x1b[2m Hint: Sometimes You Need To Close Your Eyes to See The Real ❤️⚝Ⓑⓔⓐⓤⓣⓨ⚝❤️ ~ ? \x1b[0m");
+
+    let start = Instant::now();
+    let mut tries = 0u32;
+    let mut msg = "\x1b[2mType your answer and press Enter.\x1b[0m".to_string();
+    let mut first = true;
+
+    loop {
+        if first { draw_dynamic(0.0, 0, &msg); first = false; }
+        else      { update(start.elapsed().as_secs_f64(), tries, &msg); }
+
+        let mut buf = String::new();
+        io::stdin().read_line(&mut buf).ok();
+        let s = buf.trim();
+
+        if matches!(s, "q" | "quit") {
+            update(start.elapsed().as_secs_f64(), tries, "\x1b[2mGoodbye.\x1b[0m");
+            println!(); flush(); return false;
+        }
+
+        if s.is_empty() { continue; }
+
+        tries += 1;
+
+        if correct(s) {
+            update(start.elapsed().as_secs_f64(), tries, "\x1b[92m\x1b[1m🎉 DECRYPTED!\x1b[0m");
+            flush();
+            save_trophy();
+            show_completion(
+                "LEVEL 1",
+                "The Chess Cipher has been solved.",
+                start.elapsed().as_secs_f64(), tries,
+                "Braille Alphabet Guide",
+                "trophies/level1_trophy.pdf",
+                "continue to Level 2",
+            );
+            let mut buf = String::new();
+            io::stdin().read_line(&mut buf).ok();
+            let s = buf.trim();
+            if s == "q" || s == "quit" { return false; }
+            return true;
+        }
+        msg = "\x1b[90mWrong answer.\x1b[0m".into();
+    }
 }
