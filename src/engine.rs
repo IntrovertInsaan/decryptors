@@ -52,16 +52,23 @@ pub fn terminal_detect() -> (bool, bool, bool) {
     (iterm, kitty, wt)
 }
 
-pub fn render_image(path: &str) {
+pub fn render_image(image_bytes: &[u8], ext: &str) {
     let (iterm, kitty, wt) = terminal_detect();
     let (w, h) = if wt { (75, 32) } else { (50, 20) };
-    let _ = print_from_file(path, &Config {
+
+    let mut tmp = std::env::temp_dir();
+    tmp.push(format!("decryptors_img.{ext}"));
+    std::fs::write(&tmp, image_bytes).ok();
+
+    let _ = print_from_file(&tmp, &Config {
         width: Some(w), height: Some(h), truecolor: true,
         use_iterm: iterm,
         use_kitty: kitty,
         use_sixel: wt,
         ..Default::default()
     });
+
+    std::fs::remove_file(&tmp).ok();
     if wt { println!("\n"); }
 }
 

@@ -2,6 +2,7 @@ use std::io;
 use std::time::Instant;
 use crate::engine::{flush, render_image, draw_dynamic, update, hash_answer, show_completion};
 
+const IMAGE: &[u8] = include_bytes!("../../assets/level1.png");
 const TARGET_HASH: &str = "147991c650156ef02d7df112bda2a7d1361357e539d04a06b9853fcc9da4e959";
 const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level1_trophy.pdf");
 
@@ -16,7 +17,7 @@ fn save_trophy() {
 
 pub fn run() -> bool {
     print!("\x1b[2J\x1b[3J\x1b[H\x1b[?25l"); flush();
-    render_image("assets/level1.png");
+    render_image(IMAGE, "png");
     println!("\x1b[93m\x1b[1m  ✦ DECRYPTORS\x1b[0m  \x1b[2mLevel 1 · The Chess Cipher\x1b[0m");
     println!("\x1b[2m Hint: Sometimes You Need To Close Your Eyes to See The Real ❤️⚝Ⓑⓔⓐⓤⓣⓨ⚝❤️ ~ ? \x1b[0m");
 

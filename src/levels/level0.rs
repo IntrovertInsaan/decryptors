@@ -2,6 +2,7 @@ use std::io;
 use std::time::Instant;
 use crate::engine::{flush, render_image, draw_dynamic, update, show_completion};
 
+const IMAGE: &[u8] = include_bytes!("../../assets/level0.png");
 const TARGET: i32 = 646;
 const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level0_trophy.pdf");
 
@@ -21,7 +22,7 @@ fn feedback(diff: i32) -> &'static str {
 
 pub fn run() -> bool {
     print!("\x1b[2J\x1b[3J\x1b[H\x1b[?25l"); flush();
-    render_image("assets/level0.png");
+    render_image(IMAGE, "png");
     println!("\x1b[93m\x1b[1m  ✦ DECRYPTORS\x1b[0m  \x1b[2mLevel 0 · The Fruit Cipher\x1b[0m");
     println!("\x1b[2m  Hint: Guess the total price of all fruits.  q = quit\x1b[0m");
 
