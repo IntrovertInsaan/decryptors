@@ -1,8 +1,14 @@
 use std::io;
 use std::time::Instant;
-use crate::engine::{flush, render_image, draw_dynamic, update};
+use crate::engine::{flush, render_image, draw_dynamic, update, show_completion};
 
 const TARGET: i32 = 646;
+const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level0_trophy.pdf");
+
+fn save_trophy() {
+    std::fs::create_dir_all("trophies").ok();
+    std::fs::write("trophies/level0_trophy.pdf", TROPHY_PDF).ok();
+}
 
 fn feedback(diff: i32) -> &'static str {
     match diff {
@@ -13,7 +19,7 @@ fn feedback(diff: i32) -> &'static str {
     }
 }
 
-pub fn run() {
+pub fn run() -> bool {
     print!("\x1b[2J\x1b[3J\x1b[H\x1b[?25l"); flush();
     render_image("assets/level0.png");
     println!("\x1b[93m\x1b[1m  ✦ DECRYPTORS\x1b[0m  \x1b[2mLevel 0 · The Fruit Cipher\x1b[0m");
@@ -34,7 +40,7 @@ pub fn run() {
 
         if matches!(s, "q" | "quit") {
             update(start.elapsed().as_secs_f64(), tries, "\x1b[2mGoodbye.\x1b[0m");
-            println!(); flush(); return;
+            println!(); flush(); return false;
         }
 
         let Ok(guess) = s.parse::<i32>() else {
@@ -45,7 +51,21 @@ pub fn run() {
 
         if guess == TARGET {
             update(start.elapsed().as_secs_f64(), tries, "\x1b[92m\x1b[1m🎉 DECRYPTED!\x1b[0m");
-            println!(); flush(); return;
+            flush();
+            save_trophy();
+            show_completion(
+                "LEVEL 0",
+                "The Fruit Cipher has been solved.",
+                start.elapsed().as_secs_f64(), tries,
+                "Alphabet Cipher Key",
+                "trophies/level0_trophy.pdf",
+                "continue to Level 1",
+            );
+            let mut buf = String::new();
+            io::stdin().read_line(&mut buf).ok();
+            let s = buf.trim();
+            if s == "q" || s == "quit" { return false; }
+            return true;
         }
         msg = feedback((guess - TARGET).abs()).into();
     }

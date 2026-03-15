@@ -1,9 +1,42 @@
 use std::io::{self, Write};
+use sha2::{Sha256, Digest};
 use viuer::{print_from_file, Config};
 
 pub const DYN: usize = 5;
 
 pub fn flush() { io::stdout().flush().unwrap(); }
+
+pub fn hash_answer(input: &str, salt: &str) -> String {
+    let salted = format!("{}_{}", salt, input.trim().to_lowercase());
+    format!("{:x}", Sha256::digest(salted.as_bytes()))
+}
+
+pub fn show_completion(
+    level: &str,
+    subtitle: &str,
+    elapsed: f64,
+    tries: u32,
+    trophy_name: &str,
+    trophy_path: &str,
+    next: &str,
+) {
+    print!("\x1b[2J\x1b[3J\x1b[H");
+    println!();
+    println!("\x1b[92m\x1b[1m  ╔═══════════════════════════════════════════════╗\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ║                                               ║\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ║   ✦ {level} DECRYPTED{}\x1b[0m", " ".repeat(29usize.saturating_sub(level.len())));
+    println!("\x1b[92m\x1b[1m  ║   {subtitle}{}\x1b[0m", " ".repeat(44usize.saturating_sub(subtitle.len())));
+    println!("\x1b[92m\x1b[1m  ║                                               ║\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ║   ⏱  {elapsed:.2}s  ·  ✦ {tries} tries\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ║                                               ║\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ║   🏆 Trophy: {trophy_name}{}\x1b[0m", " ".repeat(32usize.saturating_sub(trophy_name.len())));
+    println!("\x1b[92m\x1b[1m  ║   Saved → {trophy_path}{}\x1b[0m", " ".repeat(36usize.saturating_sub(trophy_path.len())));
+    println!("\x1b[92m\x1b[1m  ║                                               ║\x1b[0m");
+    println!("\x1b[92m\x1b[1m  ╚═══════════════════════════════════════════════╝\x1b[0m");
+    println!();
+    print!("\x1b[2m  Press Enter to {next}...\x1b[0m");
+    flush();
+}
 
 pub fn terminal_detect() -> (bool, bool, bool) {
     let p = std::env::var("TERM_PROGRAM").unwrap_or_default().to_lowercase();
