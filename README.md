@@ -1,20 +1,24 @@
 # Decryptors
 
-A CLI puzzle game where you decrypt hidden information through 
-unconventional thinking. Each level presents a unique cipher — 
+A CLI puzzle game where you decrypt hidden information through
+unconventional thinking. Each level presents a unique cipher —
 no linear thinking allowed.
 
 ## Puzzles
 - **Level 0** — The Fruit Cipher
-- **Level 1** — Coming soon
+- **Level 1** — The Chess Cipher
+- **Level 2** — The Ludo Cipher
+- **Level 3** — The Three Realms
 
 ## Requirements
 A terminal with image support for the best experience:
 - WezTerm ✦ recommended
-- Ghostty ✦ recommended  
+- Ghostty ✦ recommended
 - Kitty
 - iTerm2
 - Windows Terminal (supported, reduced quality)
+
+Not supported: VSCode terminal, Mac Terminal.app
 
 ## Install & Run
 ```bash
@@ -23,6 +27,11 @@ cd decryptors
 cargo run --release
 ```
 
+Optional: install mpv for audio narration in Level 3
+```bash
+sudo apt install mpv
+```
+
 ## License
-Code is [MIT](LICENSE).  
+Code is [MIT](LICENSE).
 Puzzle content is proprietary — see [LICENSE](LICENSE) for details.
