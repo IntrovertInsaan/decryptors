@@ -4,11 +4,11 @@ use crate::engine::{flush, render_image, draw_dynamic, update, show_completion};
 
 const IMAGE: &[u8] = include_bytes!("../../assets/level0.png");
 const TARGET: i32 = 646;
-const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level0_trophy.pdf");
+const TROPHY: &[u8] = include_bytes!("../../assets/trophies/level0_trophy.pdf");
 
 fn save_trophy() {
     std::fs::create_dir_all("trophies").ok();
-    std::fs::write("trophies/level0_trophy.pdf", TROPHY_PDF).ok();
+    std::fs::write("trophies/level0_trophy.pdf", TROPHY).ok();
 }
 
 fn feedback(diff: i32) -> &'static str {
@@ -55,11 +55,9 @@ pub fn run() -> bool {
             flush();
             save_trophy();
             show_completion(
-                "LEVEL 0",
-                "The Fruit Cipher has been solved.",
+                "LEVEL 0", "The Fruit Cipher has been solved.",
                 start.elapsed().as_secs_f64(), tries,
-                "Alphabet Cipher Key",
-                "trophies/level0_trophy.pdf",
+                "Level 0 Trophy", "trophies/level0_trophy.pdf",
                 "continue to Level 1",
             );
             let mut buf = String::new();

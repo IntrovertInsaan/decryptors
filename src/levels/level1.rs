@@ -4,7 +4,7 @@ use crate::engine::{flush, render_image, draw_dynamic, update, hash_answer, show
 
 const IMAGE: &[u8] = include_bytes!("../../assets/level1.png");
 const TARGET_HASH: &str = "147991c650156ef02d7df112bda2a7d1361357e539d04a06b9853fcc9da4e959";
-const TROPHY_PDF: &[u8] = include_bytes!("../../assets/trophies/level1_trophy.pdf");
+const TROPHY: &[u8] = include_bytes!("../../assets/trophies/level1_trophy.pdf");
 
 fn correct(guess: &str) -> bool {
     hash_answer(guess, "decryptors_l1") == TARGET_HASH
@@ -12,7 +12,7 @@ fn correct(guess: &str) -> bool {
 
 fn save_trophy() {
     std::fs::create_dir_all("trophies").ok();
-    std::fs::write("trophies/level1_trophy.pdf", TROPHY_PDF).ok();
+    std::fs::write("trophies/level1_trophy.pdf", TROPHY).ok();
 }
 
 pub fn run() -> bool {
@@ -48,11 +48,9 @@ pub fn run() -> bool {
             flush();
             save_trophy();
             show_completion(
-                "LEVEL 1",
-                "The Chess Cipher has been solved.",
+                "LEVEL 1", "The Chess Cipher has been solved.",
                 start.elapsed().as_secs_f64(), tries,
-                "Braille Alphabet Guide",
-                "trophies/level1_trophy.pdf",
+                "Level 1 Trophy", "trophies/level1_trophy.pdf",
                 "continue to Level 2",
             );
             let mut buf = String::new();
