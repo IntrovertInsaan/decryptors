@@ -64,6 +64,7 @@ pub fn render_image(image_bytes: &[u8], ext: &str) {
         width: Some(w), height: Some(h), truecolor: true,
         use_iterm: iterm,
         use_kitty: kitty,
+        #[cfg(feature = "sixel")]
         use_sixel: wt,
         ..Default::default()
     });

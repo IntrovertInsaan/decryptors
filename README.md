@@ -9,6 +9,7 @@ no linear thinking allowed.
 - **Level 1** — The Chess Cipher
 - **Level 2** — The Ludo Cipher
 - **Level 3** — The Three Realms
+- **Level 4** — The Shape Speaks
 
 ## Requirements
 A terminal with image support for the best experience:
@@ -25,6 +26,11 @@ Not supported: VSCode terminal, Mac Terminal.app
 git clone https://github.com/IntrovertInsaan/decryptors
 cd decryptors
 cargo run --release
+```
+
+macOS:
+```bash
+cargo run --release --no-default-features
 ```
 
 Optional: install mpv for audio narration in Level 3

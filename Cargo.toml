@@ -3,6 +3,10 @@ name = "decryptors"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = ["sixel"]
+sixel = ["viuer/sixel"]
+
 [dependencies]
 sha2 = "0.10.9"
-viuer = { version = "0.11.0", features = ["print-file", "sixel"] }
+viuer = { version = "0.11.0", features = ["print-file"] }
