@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Decryptors — Level 4</title>
+    <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a; color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      display: flex; flex-direction: column;
+      align-items: center; min-height: 100vh; padding: 2rem;
+    }
+    h1           { color: #f5c518; font-size: 1.2rem; letter-spacing: 4px; margin-bottom: 0.3rem; }
+    .subtitle    { color: #555; font-size: 0.8rem; margin-bottom: 0.5rem; letter-spacing: 2px; }
+    .hint        { color: #666; font-size: 0.75rem; margin-bottom: 0.4rem; text-align: center; }
+    .side-hint   { color: #333; font-size: 0.7rem; margin-bottom: 1rem; }
+    canvas       { border: 1px solid #222; cursor: crosshair; background: #111; touch-action: none; }
+    .controls    { display: flex; gap: 1rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+    button       { background: #0a0a0a; color: #888; border: 1px solid #222; padding: 0.4rem 1rem;
+      font-family: 'Courier New', monospace; font-size: 0.8rem; cursor: pointer;
+      letter-spacing: 1px; transition: all 0.15s; }
+    button:hover         { border-color: #f5c518; color: #f5c518; }
+    button:disabled      { opacity: 0.3; cursor: default; }
+    button:disabled:hover{ border-color: #222; color: #888; }
+    .brush-row   { display: flex; align-items: center; gap: 0.5rem; color: #444; font-size: 0.7rem; }
+    input[type=range]    { width: 70px; accent-color: #f5c518; }
+    #result      { margin-top: 1.5rem; padding: 1.2rem 2.5rem; border: 1px solid #222;
+      text-align: center; display: none; max-width: 600px; width: 100%; }
+    #result.success      { border-color: #1a5c1a; }
+    #result.fail         { border-color: #3a1a1a; }
+    #result-text         { font-size: 0.85rem; letter-spacing: 1px; color: #888; }
+    #result.success #result-text { color: #4caf50; }
+    .code-display        { margin-top: 1rem; font-size: 1.8rem; color: #f5c518; letter-spacing: 8px; font-weight: bold; }
+    .terminal-hint       { margin-top: 0.6rem; font-size: 0.7rem; color: #444; }
+    #debug               { font-size: 0.6rem; color: #2a2a2a; margin-top: 0.8rem; line-height: 1.6; }
+    </style>
+  </head>
+  <body>
+
+    <h1>✦ DECRYPTORS</h1>
+    <div class="subtitle">LEVEL 4 · THE SHAPE SPEAKS</div>
+    <div class="hint">Draw what you discovered at those coordinates.</div>
+    <div class="side-hint">it lies on its side</div>
+
+    <canvas id="canvas" width="600" height="380"></canvas>
+
+    <div class="controls">
+      <button id="undoBtn" onclick="undo()" disabled>undo</button>
+      <button onclick="clearCanvas()">clear</button>
+      <button onclick="checkDrawing()">submit</button>
+      <div class="brush-row">brush <input type="range" id="brush" min="3" max="20" value="8"></div>
+    </div>
+
+    <div id="result">
+      <div id="result-text"></div>
+      <div class="code-display" id="unlock-code"></div>
+      <div class="terminal-hint" id="terminal-hint"></div>
+      <div id="debug"></div>
+    </div>
+
+    <script>
+    // ── canvas setup ──────────────────────────────────────────────────────────────
+    const canvas = document.getElementById('canvas');
+    const ctx    = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    let drawing = false, lastX = 0, lastY = 0;
+    let history = []; // undo stack
+
+    ctx.strokeStyle = '#d0d0d0';
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+
+    // ── undo ──────────────────────────────────────────────────────────────────────
+    function saveState() {
+      history.push(ctx.getImageData(0, 0, W, H));
+      if (history.length > 50) history.shift();
+      document.getElementById('undoBtn').disabled = false;
+    }
+
+    function undo() {
+      if (!history.length) return;
+      history.pop();
+      if (!history.length) {
+        ctx.clearRect(0, 0, W, H);
+        document.getElementById('undoBtn').disabled = true;
+      } else {
+        ctx.putImageData(history[history.length - 1], 0, 0);
+      }
+    }
+
+    // ── drawing ───────────────────────────────────────────────────────────────────
+    function getPos(e) {
+      const r  = canvas.getBoundingClientRect();
+      const sx = W / r.width, sy = H / r.height;
+      if (e.touches) return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
+      return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
+    }
+
+    canvas.addEventListener('mousedown',  e => { saveState(); drawing = true; [lastX, lastY] = getPos(e); });
+    canvas.addEventListener('mousemove',  e => { if (drawing) draw(e); });
+    canvas.addEventListener('mouseup',    () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); saveState(); drawing = true; [lastX, lastY] = getPos(e); });
+    canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (drawing) draw(e); });
+    canvas.addEventListener('touchend',   () => drawing = false);
+
+    function draw(e) {
+      const [x, y] = getPos(e);
+      ctx.lineWidth = parseInt(document.getElementById('brush').value);
+      ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+      [lastX, lastY] = [x, y];
+    }
+
+    function clearCanvas() {
+      history = [];
+      ctx.clearRect(0, 0, W, H);
+      document.getElementById('undoBtn').disabled    = true;
+      document.getElementById('result').style.display = 'none';
+    }
+
+    // ── pixel helpers ─────────────────────────────────────────────────────────────
+    function getPixelData() { return ctx.getImageData(0, 0, W, H).data; }
+
+    function totalInk(data) {
+      let n = 0;
+      for (let i = 3; i < data.length; i += 4) if (data[i] > 20) n++;
+      return n;
+    }
+
+    function getBoundingBox(data) {
+      let minX = W, maxX = 0, minY = H, maxY = 0;
+      for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++)
+      if (data[(y * W + x) * 4 + 3] > 20) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+      return { minX, maxX, minY, maxY, width: maxX - minX, height: maxY - minY };
+    }
+
+    // column-by-column vertical span (height of ink at each x)
+    function getColumnSpans(data) {
+      const topY = new Array(W).fill(H), botY = new Array(W).fill(0);
+      for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++)
+      if (data[(y * W + x) * 4 + 3] > 20) {
+        if (y < topY[x]) topY[x] = y;
+        if (y > botY[x]) botY[x] = y;
+      }
+      return Array.from({ length: W }, (_, x) => topY[x] < H ? botY[x] - topY[x] : 0);
+    }
+
+    function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+
+    // ── shape analysis ────────────────────────────────────────────────────────────
+
+    function isHorizontal(bb) {
+      return (bb.width / (bb.height || 1)) > 1.4;
+    }
+
+    function splitBodyNeck(spans, bb) {
+      const splitX    = Math.floor(bb.minX + bb.width * 0.60);
+      const bodySpans = spans.slice(bb.minX, splitX).filter(s => s > 2);
+      const neckSpans = spans.slice(splitX, bb.maxX + 1).filter(s => s > 2);
+      return { bodyAvg: avg(bodySpans), neckAvg: avg(neckSpans), neckSpans, splitX };
+    }
+
+    function hasNeckExtension({ bodyAvg, neckAvg, neckSpans }) {
+      return neckSpans.length > 10 && neckAvg < bodyAvg * 0.65;
+    }
+
+    function hasBodyWaist(spans, bb, splitX) {
+      const third    = Math.floor((splitX - bb.minX) / 3);
+      const leftAvg  = avg(spans.slice(bb.minX,             bb.minX + third).filter(s => s > 2));
+      const midAvg   = avg(spans.slice(bb.minX + third,     bb.minX + third * 2).filter(s => s > 2));
+      const rightAvg = avg(spans.slice(bb.minX + third * 2, splitX).filter(s => s > 2));
+      return { result: midAvg < leftAvg * 0.85 && midAvg < rightAvg * 0.85, leftAvg, midAvg, rightAvg };
+    }
+
+    function debugInfo(bb, neck, waist) {
+      const aspect = (bb.width / (bb.height || 1)).toFixed(2);
+      return [
+        `bbox:${bb.width}×${bb.height} aspect:${aspect}`,
+        `bodyAvg:${neck.bodyAvg.toFixed(1)} neckAvg:${neck.neckAvg.toFixed(1)}`,
+        `thirds: ${waist.leftAvg.toFixed(1)} / ${waist.midAvg.toFixed(1)} / ${waist.rightAvg.toFixed(1)}`,
+      ].join('\n');
+    }
+
+    // ── shape check entry point ───────────────────────────────────────────────────
+
+    function checkDrawing() {
+      const data = getPixelData();
+      const ink  = totalInk(data);
+
+      const resultEl = document.getElementById('result');
+      const textEl   = document.getElementById('result-text');
+      const codeEl   = document.getElementById('unlock-code');
+      const hintEl   = document.getElementById('terminal-hint');
+      const dbg      = document.getElementById('debug');
+
+      resultEl.style.display = 'block';
+
+      if (ink < 800) {
+        resultEl.className = 'fail';
+        textEl.textContent = 'Canvas is empty. Draw something first.';
+        codeEl.textContent = ''; hintEl.textContent = ''; return;
+      }
+
+      const bb    = getBoundingBox(data);
+      const spans = getColumnSpans(data);
+
+      if (spans.slice(bb.minX, bb.maxX + 1).filter(s => s > 2).length < 20) {
+        resultEl.className = 'fail';
+        textEl.textContent = 'Drawing too small. Try drawing larger.';
+        codeEl.textContent = ''; hintEl.textContent = ''; return;
+      }
+
+      const wide  = isHorizontal(bb);
+      const neck  = splitBodyNeck(spans, bb);
+      const waist = hasBodyWaist(spans, bb, neck.splitX);
+
+      const recognized = wide && neck.bodyAvg > 15 && hasNeckExtension(neck) && waist.result;
+
+      dbg.textContent = debugInfo(bb, neck, waist);
+
+      if (recognized) {
+        resultEl.className = 'success';
+        textEl.textContent = '✦ SHAPE RECOGNIZED';
+        codeEl.textContent = 'BOLD-4';
+        hintEl.textContent = 'Switch back to terminal and enter this code.';
+      } else {
+        resultEl.className = 'fail';
+        if (!wide)                    textEl.textContent = 'The shape should be wider than it is tall.';
+          else if (!hasNeckExtension(neck)) textEl.textContent = 'Missing the narrow part on the right side.';
+            else if (!waist.result)       textEl.textContent = 'Body needs curves — wider at top and bottom, narrower in the middle.';
+              else                          textEl.textContent = 'Shape not recognized. Try again.';
+        codeEl.textContent = '';
+        hintEl.textContent = '';
+      }
+    }
+    </script>
+  </body>
+</html>
