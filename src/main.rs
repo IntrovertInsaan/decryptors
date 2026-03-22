@@ -2,11 +2,15 @@ mod engine;
 mod levels;
 
 fn main() {
-    if levels::level0::run() {
-        if levels::level1::run() {
-            if levels::level2::run() {
-                levels::level3::run();
-            }
-        }
+    let passed = [
+        levels::level0::run,
+        levels::level1::run,
+        levels::level2::run,
+        levels::level3::run,
+        levels::level4::run,
+    ];
+
+    for level in passed {
+        if !level() { return; }
     }
 }
