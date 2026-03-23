@@ -5,3 +5,4 @@ pub mod level3;
 pub mod colors;
 pub mod level4;
 pub mod level5;
+pub mod level6;
