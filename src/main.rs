@@ -10,6 +10,7 @@ fn main() {
         levels::level4::run,
         levels::level5::run,
         levels::level6::run,
+        levels::level7::run,
     ];
 
     for level in passed {
