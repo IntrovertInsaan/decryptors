@@ -10,6 +10,7 @@ no linear thinking allowed.
 - **Level 2** — The Ludo Cipher
 - **Level 3** — The Three Realms
 - **Level 4** — The Shape Speaks
+- **Level 5** — The Cosmos Cipher
 
 ## Requirements
 A terminal with image support for the best experience:
@@ -33,7 +34,7 @@ macOS:
 cargo run --release --no-default-features
 ```
 
-Optional: install mpv for audio narration in Level 3
+Optional: install mpv for audio (used in levels 3 and 5)
 ```bash
 sudo apt install mpv
 ```
