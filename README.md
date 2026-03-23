@@ -11,6 +11,7 @@ no linear thinking allowed.
 - **Level 3** — The Three Realms
 - **Level 4** — The Shape Speaks
 - **Level 5** — The Cosmos Cipher
+- **Level 6** — The Fable Cipher
 
 ## Requirements
 A terminal with image support for the best experience:
