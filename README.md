@@ -12,6 +12,7 @@ no linear thinking allowed.
 - **Level 4** — The Shape Speaks
 - **Level 5** — The Cosmos Cipher
 - **Level 6** — The Fable Cipher
+- **Level 7** — The Binary Lock
 
 ## Requirements
 A terminal with image support for the best experience:
