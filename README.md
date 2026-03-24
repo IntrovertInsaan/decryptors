@@ -22,7 +22,9 @@ A terminal with image support for the best experience:
 - iTerm2
 - Windows Terminal (supported, reduced quality)
 
-Not supported: VSCode terminal, Mac Terminal.app
+Not supported: VSCode terminal, Mac Terminal
+
+**iTerm2 users:** You may see a permission prompt for inline image display — click Yes to allow it. Check "Remember my choice" to skip it in future sessions.
 
 ## Install & Run
 ```bash
