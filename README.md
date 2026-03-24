@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" width="600">
+</p>
+
 # Decryptors
 
 A CLI puzzle game where you decrypt hidden information through
