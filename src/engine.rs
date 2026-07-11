@@ -43,18 +43,29 @@ pub fn show_completion(
     flush();
 }
 
-pub fn terminal_detect() -> (bool, bool, bool) {
+pub fn terminal_detect() -> (bool, bool) {
     let p = std::env::var("TERM_PROGRAM").unwrap_or_default().to_lowercase();
     let t = std::env::var("TERM").unwrap_or_default().to_lowercase();
-    let wt = std::env::var("WT_SESSION").is_ok();
-    let iterm = p.contains("wezterm") || p.contains("iterm") || p.contains("ghostty");
-    let kitty = t.contains("kitty");
-    (iterm, kitty, wt)
+    let iterm = p.contains("iterm");
+    let kitty = t.contains("kitty") || t.contains("ghostty") || p.contains("wezterm");
+    (iterm, kitty)
 }
 
 pub fn render_image(image_bytes: &[u8], ext: &str) {
-    let (iterm, kitty, wt) = terminal_detect();
-    let (w, h) = if wt { (75, 32) } else { (50, 20) };
+    let (iterm, kitty) = terminal_detect();
+
+    if !iterm && !kitty {
+        println!("\x1b[93m  ⚠ This terminal doesn't support high-quality inline images.\x1b[0m");
+        println!("  Decryptors requires one of:");
+        println!("    • Kitty    ✦ recommended");
+        println!("    • Ghostty  ✦ recommended");
+        println!("    • WezTerm  ✦ recommended");
+        println!("    • iTerm2   ✦ recommended");
+        println!("\n  Please run the game in one of these terminals for the full puzzle experience.\n");
+        return;
+    }
+
+    let (w, h) = (50, 22);
 
     let mut tmp = std::env::temp_dir();
     tmp.push(format!("decryptors_img.{ext}"));
@@ -64,13 +75,10 @@ pub fn render_image(image_bytes: &[u8], ext: &str) {
         width: Some(w), height: Some(h), truecolor: true,
         use_iterm: iterm,
         use_kitty: kitty,
-        #[cfg(feature = "sixel")]
-        use_sixel: wt,
         ..Default::default()
     });
 
     std::fs::remove_file(&tmp).ok();
-    if wt { println!("\n"); }
 }
 
 pub fn draw_dynamic(elapsed: f64, tries: u32, msg: &str) {
