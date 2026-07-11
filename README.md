@@ -46,5 +46,4 @@ cargo run --release
 ```
 
 ## License
-Code is [MIT](LICENSE).
-Puzzle content is proprietary — see [LICENSE](LICENSE) for details.
+Code is [GPL-2.0](https://github.com/IntrovertInsaan/decryptors/blob/main/LICENSE). Puzzle content is proprietary — see [LICENSE](https://github.com/IntrovertInsaan/decryptors/blob/main/LICENSE) for details.
