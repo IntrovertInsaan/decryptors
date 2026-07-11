@@ -20,31 +20,29 @@ no linear thinking allowed.
 
 ## Requirements
 A terminal with image support for the best experience:
-- WezTerm ✦ recommended
+- Kitty ✦ recommended
 - Ghostty ✦ recommended
-- Kitty
+- WezTerm ✦ recommended
 - iTerm2
-- Windows Terminal (supported, reduced quality)
 
-Not supported: VSCode terminal, Mac Terminal
+Not supported: Alacritty, VSCode terminal, Windows Terminal, Mac Terminal
 
 **iTerm2 users:** You may see a permission prompt for inline image display — click Yes to allow it. Check "Remember my choice" to skip it in future sessions.
+
+A color emoji font is required for some puzzles (e.g. `noto-fonts-emoji` on Arch). Most desktop Linux distros and macOS ship one by default.
+
+mpv is required for audio:
+```bash
+sudo pacman -S mpv      # Arch
+sudo apt install mpv    # Debian/Ubuntu
+sudo dnf install mpv    # Fedora
+```
 
 ## Install & Run
 ```bash
 git clone https://github.com/IntrovertInsaan/decryptors
 cd decryptors
 cargo run --release
-```
-
-macOS:
-```bash
-cargo run --release --no-default-features
-```
-
-Optional: install mpv for audio (used in levels 3 and 5)
-```bash
-sudo apt install mpv
 ```
 
 ## License
